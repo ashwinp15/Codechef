@@ -3,45 +3,40 @@
 # include <bits/stdc++.h>
 # include <cstdio>
 
-int takeTest (int start[], int end[], int wormV[], int wormW[], int N, int X, int Y)
+int takeTest (std::pair<int, int> testTimes[], int wormV[], int wormW[], int N, int X, int Y)
 {
 	 // initialising bestTime to the largest possible time
-	 int bestTime = wormW[Y-1] - wormV[0];
+	 int bestTime = wormW[Y-1] - wormV[0] + 1;
 	 for (int i=0; i<N; i++)
 	 {
 			int entry= 0;
 			int exit = Y-1;
-		// 	int flag1 = 0;
-		// 	int flag2 = 0;
-			for (int j=X-1; j>0; j--)
+			// 	int flag1 = 0;
+			// 	int flag2 = 0;
+			if ((testTimes[i].second - testTimes[i].first + 1) < bestTime)
 			{
-				 if (wormV[j] <= start[i])
+				 for (int j=X-1; j>0; j--)
 				 {
-						entry = j;
-						break;
+						if (wormV[j] <= testTimes[i].first)
+						{
+							 entry = j;
+							 break;
+						}
 				 }
-			}
-		//	if (flag1==0)
-		//	{
-		//		 entry = X-1;
-		//	}
-			for (int j=0; j<Y; j++)
-			{
-				 if (wormW[j] >= end[i])
+				 for (int j=0; j<Y; j++)
 				 {
-						exit= j;
-						break;
+						if (wormW[j] >= testTimes[i].second)
+						{
+							 exit= j;
+							 break;
+						}
 				 }
-			}
-		//	if (flag2==0)
-		//	{
-		//		 exit = 0;
-		//	}
-			int thisTime = wormW[exit] - wormV[entry] + 1;
-			if (thisTime < bestTime)
-			{
-				 bestTime = thisTime;
-			}
+				 int thisTime = wormW[exit] - wormV[entry] + 1;
+				 if (thisTime < bestTime)
+				 {
+						bestTime = thisTime;
+				 }
+	    }
 	 }
 
 	 return bestTime;
@@ -52,11 +47,12 @@ int main()
 {
 	 int N, X, Y;
 	 std::scanf("%d%d%d", &N, &X, &Y);
-	 int start[N], end[N], wormV[X], wormW[Y];
+	 std::pair<int, int> testTimes[N];
+	 int  wormV[X], wormW[Y];
 
 	 for (int i=0; i<N; i++)
 	 {
-			std::cin >> start[i] >> end[i];
+			std::cin >> testTimes[i].first >> testTimes[i].second;
 	 }
 
 	 for (int i=0; i<X; i++)
@@ -70,12 +66,11 @@ int main()
 	 }
 
 	 // sorting all the timestamps
-	 std::sort(start, start+N);
-	 std::sort(end, end+N);
+	 std::sort(testTimes, testTimes+N);
 	 std::sort(wormV, wormV+X);
 	 std::sort(wormW, wormW+Y);
 
-	 std::cout << takeTest(start, end, wormV, wormW, N, X, Y);
+	 std::cout << takeTest(testTimes, wormV, wormW, N, X, Y);
 
 	 return 0;
 }
